@@ -1,23 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Shopp.Web.Data;
-using Shopp.Web.Data.Entities;
+﻿
+
 
 namespace Shopp.Web.Controllers
 {
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using Data;
+    using Data.Entities;
+    using Helpers;
     public class ProductsController : Controller
     {
-        private readonly DataContext _context;
         private readonly IRepository repository;
+        private readonly IUserHelper userHelper;
 
-        public ProductsController(IRepository repository)
+
+        public ProductsController(IRepository repository, IUserHelper userHelper)
         {
             this.repository = repository;
+            this.userHelper = userHelper;
         }
 
         // GET: Products
@@ -50,14 +51,15 @@ namespace Shopp.Web.Controllers
         }
 
         // POST: Products/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Product product)
         {
             if (ModelState.IsValid)
             {
+                // TODO: cambiar el login del usuario
+                product.User = await this.userHelper.GetUserByEmailAsync("luis.vegliante@gmail.com");
                 this.repository.AddProduct(product);
                 await this.repository.SaveAllAsync();
                 return RedirectToAction(nameof(Index));
@@ -82,7 +84,6 @@ namespace Shopp.Web.Controllers
         }
 
         // POST: Products/Edit/5
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Product product)
@@ -91,6 +92,8 @@ namespace Shopp.Web.Controllers
             {
                 try
                 {
+                    // TODO: cambiar el login del usuario
+                    product.User = await this.userHelper.GetUserByEmailAsync("luis.vegliante@gmail.com");
                     this.repository.UpdateProduct(product);
                     await this.repository.SaveAllAsync();
                 }

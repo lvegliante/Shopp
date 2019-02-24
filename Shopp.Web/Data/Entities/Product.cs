@@ -5,8 +5,8 @@ namespace Shopp.Web.Data.Entities
     using System;
     using System.ComponentModel.DataAnnotations;
 
-    public class Product
-
+    public class Product : IEntity
+        //con la clase IEntity obligamos que todas las clases que la heredan tengan el atributo Id
     {
         public int Id { get; set; }
 
